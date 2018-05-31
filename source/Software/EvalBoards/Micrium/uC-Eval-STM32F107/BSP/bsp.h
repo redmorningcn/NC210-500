@@ -163,7 +163,23 @@
 #define  BSP_GPIOD_LEDS                         (BSP_GPIOD_LED1 | \
                                                  BSP_GPIOD_LED2 | \
                                                  BSP_GPIOD_LED3)
+/***********************************************
+* 描述： LED端口定义（自己添加）
+*/
+#define  GPIO_RCC_LED1                          RCC_APB2Periph_GPIOB
+#define  GPIO_PORT_LED1                         GPIOB
+#define  GPIO_PIN_LED1                          DEF_BIT_07
+#define  GPIO_RCC_LED2                          RCC_APB2Periph_GPIOD
 
+#define  GPIO_PORT_LED2                         GPIOD
+#define  GPIO_PIN_LED2                          DEF_BIT_01
+
+#define  BSP_GPIO_LEDS                         (GPIO_PIN_LED1 | \
+                                                GPIO_PIN_LED2)
+
+#define  BSP_LED_ALL                            0
+#define  BSP_LED_RUN                            1
+#define  BSP_LED_ERR                            2
 
                                                                 /* -------------------- GPIOE PINS -------------------- */
 #define  BSP_GPIOE_PIN_00                        DEF_BIT_00

@@ -4,9 +4,14 @@
 * Author       : 2018/5/11 星期五, by redmorningcn
 *******************************************************************************/
 #include <tasks.h>
+#include <includes.h>
+#include  <drives.h>
 
 extern  void App_ModbusInit(void);
 extern  void  App_OS_SetAllHooks (void);
+void    Bsp_ADC_Init(void);
+void    Init_boardID( void );
+uint8   get_boardID(void);
 
 /*******************************************************************************
 * Description  : BSP初始化钩子函数，在任务执行前运行
@@ -15,6 +20,19 @@ extern  void  App_OS_SetAllHooks (void);
 void    BSP_Init_Hook(void)
 {
     App_ModbusInit();                   //初始化串口及串口控制信息
+    
+    /*******************************************************************************
+    * Description  : 信号幅值及工作电源电压检测初始化化
+    * Author       : 2018/4/12 星期四, by redmorningcn
+    *******************************************************************************/
+	Bsp_ADC_Init();
+    
+    /*******************************************************************************
+    * Description  : 设备ID号获取初始化
+    * Author       : 2018/4/13 星期五, by redmorningcn
+    *******************************************************************************/
+    Init_boardID();
+    Ctrl.sys.id = get_boardID();
 }
 
 /*******************************************************************************

@@ -7,35 +7,41 @@
 
 #include    "stm32f10x_type.h"
 #include    <app_com_type.h>
+#include    <app_loco_runstatus.h>
 
 
+/*******************************************************************************
+* Description  : 系统运行参数
+* Author       : 2018/3/14 星期三, by redmorningcn
+*******************************************************************************/
+typedef struct  
+{
+    uint32  id;             //产品id
+    uint32  addr;           //通讯地址
+    uint8   buf[64];        //预留
+    uint32  cpu_freq;       //cpu频率
+    uint32  time;           //系统全局时间(系统时钟(1/72Mhz) *65536)=约1ms
+}strSysPara;    
+    
+__packed
 typedef union _Unnctrl_ {
-   struct{
-//        /***************************************************
-//        * 描述： 系统参数：起始地址 = 000   通讯密码，软件版本，记录号，产品信息
-//        */ 
-//        StrRecHeadInfo      sHeadInfo;                      // 16
-//        /***************************************************
-//        * 描述：记录号管理地址：起始地址 = 016
-//        */
-//        StrRecNumMgr        sRecNumMgr;			            // 16
-//        /***************************************************
-//        * 描述：产品信息：起始地址 = 032
-//        */
-//        StrProductInfo	    sProductInfo;			        // 32
-// 
-        StrCOMCtrl      ComCtrl[4];
+    struct{
+        strSysPara          sys;            //公共参数
+        strLocoRunStatus    loco;           //产品特有参数    
+        //strCaliTable        calitab;      //修正系数
+        StrCOMCtrl          ComCtrl[4];     //串口控制结构体
     };
-    u16   buf[512];
+    uint16   buf[1024];
         
 }Unnctrl;
 
-//变量声明
-extern   volatile Unnctrl     sCtrl;
 
-extern   volatile StrCOMCtrl  * DtuCom;
-extern   volatile StrCOMCtrl  * MtrCom;
-extern   volatile  StrCOMCtrl  * TaxCom;
+//变量声明
+extern    Unnctrl     Ctrl;
+
+extern    StrCOMCtrl  * DtuCom;
+extern    StrCOMCtrl  * MtrCom;
+extern    StrCOMCtrl  * TaxCom;
 
 #endif                                                          /* End of  include.                       */
 

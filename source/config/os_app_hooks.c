@@ -28,6 +28,7 @@
 
 #include <os.h>
 #include <os_app_hooks.h>
+#include <includes.h>
 
 /*$PAGE*/
 /*
@@ -247,6 +248,8 @@ void  App_OS_TimeTickHook (void)
     extern void osalTimerUpdate(void);
 //#if ( OSAL_EN == DEF_ENABLED )
     osalTimerUpdate();                              // OSAL定时器更新    
+    Ctrl.sys.time++;                                               //系统时间置0
+
 //#endif
     
 }

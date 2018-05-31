@@ -72,6 +72,49 @@ static  void  AppTaskCreate (void);
 static  void  AppObjCreate  (void);
 static  void  AppTaskStart  (void *p_arg);
 
+/*******************************************************************************
+* Description  :  指示灯任务，手柄在零位或没信号，慢闪，其他快闪，定期调用（100ms）
+* Author       : 2018/4/13 星期五, by redmorningcn
+*******************************************************************************/
+void    led_task(void)
+{
+    static  uint8   blinkcnt= 0;
+    
+    blinkcnt++;
+    
+    if(Ctrl.loco.para.loco.lw )   //闪快慢控制   
+    {
+        blinkcnt %= 20;                                     //所有通道无信号，慢闪  
+    }
+    else
+    {
+        blinkcnt %= 2;                                      //任意通道有信号，快闪
+    }
+    
+    if(blinkcnt == 0)                                       //亮、灭灯
+    {
+        BSP_LED_On(1);
+    }
+    else
+    {
+        BSP_LED_Off(1);
+    }
+}
+
+/*******************************************************************************
+* Description  : 闲置任务，时间不紧迫的工作在此运行
+* Author       : 2018/4/16 星期一, by redmorningcn
+*******************************************************************************/
+void    idle_task(void)      
+{
+    static  uint32  tick;
+    if(Ctrl.sys.time > tick+100 ||  Ctrl.sys.time < tick)   //100ms
+    {
+        tick = Ctrl.sys.time;                               //时间
+        
+        led_task();                                         //指示灯控制
+    }
+}
 
 /*
 *********************************************************************************************************
@@ -158,18 +201,20 @@ static  void  AppTaskStart (void *p_arg)
     BSP_LED_Off(0);
 
     while (DEF_TRUE) {                                          /* Task body, always written as an infinite loop.       */
-        BSP_LED_Toggle(0);
-        
-//        char buf[4] = {0,1,2,3};
-//        
-//        for(int i =0 ; i < 3;i++)
-//        {
-//            memcpy(sCtrl.ComCtrl[i].pch->TxBuf,buf,sizeof(buf));
-//            sCtrl.ComCtrl[i].pch->TxBufByteCtr = sizeof(buf);
-//            MB_Tx (sCtrl.ComCtrl[i].pch);
-//        }
 
-        OSTimeDlyHMSM(0, 0, 0, 500,
+        /*******************************************************************************
+        * Description  : 采集计算工况电压
+        * Author       : 2018/4/17 星期二, by redmorningcn
+        *******************************************************************************/
+        app_calc_locovoltage();
+        
+        /*******************************************************************************
+        * Description  : 空闲任务，时间不敏感的的工作在此运行，每100ms运行一次
+        * Author       : 2018/4/16 星期一, by redmorningcn
+        *******************************************************************************/
+        idle_task();
+
+        OSTimeDlyHMSM(0, 0, 0, 100,
                       OS_OPT_TIME_HMSM_STRICT,
                       &err);
     }

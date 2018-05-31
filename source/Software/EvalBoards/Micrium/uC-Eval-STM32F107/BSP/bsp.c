@@ -185,12 +185,18 @@ void  BSP_Init (void)
     FLASH_SetLatency(FLASH_Latency_2);                          /* 2 Flash wait states when HCLK > 48MHz.               */
     FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);
 
+    int time = 10000;       //redmorningcn 180530 ∑¿÷πø®À¿              
     while (RCC_GetFlagStatus(RCC_FLAG_PLL2RDY) == RESET) {      /* Wait for PLL2 to lock.                               */
-        ;
+        time--;
+        if(time == 0)
+            break;
     }
 
+    time = 10000;           //redmorningcn 180530 ∑¿÷πø®À¿              
     while (RCC_GetFlagStatus(RCC_FLAG_PLL3RDY) == RESET) {      /* Wait for PLL3 to lock.                               */
-        ;
+        time--;
+        if(time == 0)
+            break;
     }
                                                                 /* Fprediv1 = PLL2 / 5 =  8MHz.                         */
     RCC_PREDIV1Config(RCC_PREDIV1_Source_PLL2, RCC_PREDIV1_Div5);
@@ -276,20 +282,21 @@ CPU_INT32U  BSP_CPU_ClkFreq (void)
 * Note(s)     : none.
 *********************************************************************************************************
 */
-
 static  void  BSP_LED_Init (void)
 {
     GPIO_InitTypeDef  gpio_init;
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
-
-    gpio_init.GPIO_Pin   = BSP_GPIOD_LEDS;
+        
+    RCC_APB2PeriphClockCmd(GPIO_RCC_LED1, ENABLE);
+    
+    gpio_init.GPIO_Pin   = GPIO_PIN_LED1;
     gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
     gpio_init.GPIO_Mode  = GPIO_Mode_Out_PP;
-
-    GPIO_Init(GPIOD, &gpio_init);
+    
+    GPIO_Init(GPIO_PORT_LED1, &gpio_init);
+    
+    
+    BSP_LED_Off(BSP_LED_ALL);
 }
-
 
 /*
 *********************************************************************************************************
@@ -299,10 +306,11 @@ static  void  BSP_LED_Init (void)
 *
 * Argument(s) : led     The ID of the LED to control:
 *
-*                       0    turns ON ALL the LEDs
-*                       1    turns ON user LED1  on the board
-*                       2    turns ON user LED2  on the board
-*                       3    turns ON user LED3  on the board
+*                       0    turn ON all LEDs on the board
+*                       1    turn ON LED 1
+*                       2    turn ON LED 2
+*                       3    turn ON LED 3
+*                       4    turn ON LED 4
 *
 * Return(s)   : none.
 *
@@ -316,26 +324,20 @@ void  BSP_LED_On (CPU_INT08U led)
 {
     switch (led) {
         case 0:
-             GPIO_SetBits(GPIOD, BSP_GPIOD_LEDS);
+             GPIO_SetBits(GPIO_PORT_LED1, GPIO_PIN_LED1);
+             GPIO_SetBits(GPIO_PORT_LED2, GPIO_PIN_LED1);
              break;
-
         case 1:
-             GPIO_SetBits(GPIOD, BSP_GPIOD_LED1);
+             GPIO_SetBits(GPIO_PORT_LED1, GPIO_PIN_LED1);
              break;
-
         case 2:
-             GPIO_SetBits(GPIOD, BSP_GPIOD_LED2);
-             break;
-
-        case 3:
-             GPIO_SetBits(GPIOD, BSP_GPIOD_LED3);
+             GPIO_SetBits(GPIO_PORT_LED2, GPIO_PIN_LED2);
              break;
 
         default:
              break;
     }
 }
-
 
 /*
 *********************************************************************************************************
@@ -345,10 +347,11 @@ void  BSP_LED_On (CPU_INT08U led)
 *
 * Argument(s) : led     The ID of the LED to control:
 *
-*                       0    turns OFF ALL the LEDs
-*                       1    turns OFF user LED1  on the board
-*                       2    turns OFF user LED2  on the board
-*                       3    turns OFF user LED3  on the board
+*                       0    turn OFF all LEDs on the board
+*                       1    turn OFF LED 1
+*                       2    turn OFF LED 2
+*                       3    turn OFF LED 3
+*                       4    turn OFF LED 4
 *
 * Return(s)   : none.
 *
@@ -362,26 +365,20 @@ void  BSP_LED_Off (CPU_INT08U led)
 {
     switch (led) {
         case 0:
-             GPIO_ResetBits(GPIOD, BSP_GPIOD_LEDS);
+             GPIO_ResetBits(GPIO_PORT_LED1, GPIO_PIN_LED1);
+             GPIO_ResetBits(GPIO_PORT_LED2, GPIO_PIN_LED2);
              break;
-
         case 1:
-             GPIO_ResetBits(GPIOD, BSP_GPIOD_LED1);
+             GPIO_ResetBits(GPIO_PORT_LED1, GPIO_PIN_LED1);
              break;
-
         case 2:
-             GPIO_ResetBits(GPIOD, BSP_GPIOD_LED2);
-             break;
-
-        case 3:
-             GPIO_ResetBits(GPIOD, BSP_GPIOD_LED3);
+             GPIO_ResetBits(GPIO_PORT_LED2, GPIO_PIN_LED2);
              break;
 
         default:
              break;
     }
 }
-
 
 /*
 *********************************************************************************************************
@@ -391,10 +388,11 @@ void  BSP_LED_Off (CPU_INT08U led)
 *
 * Argument(s) : led     The ID of the LED to control:
 *
-*                       0    TOGGLE ALL the LEDs
-*                       1    TOGGLE user LED1  on the board
-*                       2    TOGGLE user LED2  on the board
-*                       3    TOGGLE user LED3  on the board
+*                       0    TOGGLE all LEDs on the board
+*                       1    TOGGLE LED 1
+*                       2    TOGGLE LED 2
+*                       3    TOGGLE LED 3
+*                       4    TOGGLE LED 4
 *
 * Return(s)   : none.
 *
@@ -411,20 +409,24 @@ void  BSP_LED_Toggle (CPU_INT08U led)
 
     switch (led) {
         case 0:
-             pins =  GPIO_ReadOutputData(GPIOD);
-             pins ^= BSP_GPIOD_LEDS;
-             GPIO_SetBits(  GPIOD,   pins  & BSP_GPIOD_LEDS);
-             GPIO_ResetBits(GPIOD, (~pins) & BSP_GPIOD_LEDS);
+             BSP_LED_Toggle(1);
+             BSP_LED_Toggle(2);
              break;
 
         case 1:
-        case 2:
-        case 3:
-            pins = GPIO_ReadOutputData(GPIOD);
-            if ((pins & (1 << (led + BSP_LED_START_BIT))) == 0) {
-                 GPIO_SetBits(  GPIOD, (1 << (led + BSP_LED_START_BIT)));
+            pins = GPIO_ReadOutputData(GPIO_PORT_LED1);
+             if ((pins & GPIO_PIN_LED1) == 0) {
+                 GPIO_SetBits   (GPIO_PORT_LED1, GPIO_PIN_LED1);
              } else {
-                 GPIO_ResetBits(GPIOD, (1 << (led + BSP_LED_START_BIT)));
+                 GPIO_ResetBits (GPIO_PORT_LED1, GPIO_PIN_LED1);
+             }
+            break;
+        case 2:
+            pins = GPIO_ReadOutputData(GPIO_PORT_LED2);
+             if ((pins & GPIO_PIN_LED2) == 0) {
+                 GPIO_SetBits   (GPIO_PORT_LED2, GPIO_PIN_LED2);
+             } else {
+                 GPIO_ResetBits (GPIO_PORT_LED2, GPIO_PIN_LED2);
              }
             break;
 
@@ -432,7 +434,6 @@ void  BSP_LED_Toggle (CPU_INT08U led)
              break;
     }
 }
-
 
 /*
 *********************************************************************************************************

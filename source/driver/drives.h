@@ -10,9 +10,14 @@
 
 
 //osal
-void  App_TaskOsalCreate(void);
-void TaskInitTmr(void);
+void    App_TaskOsalCreate(void);
+void    TaskInitTmr(void);
 osalEvt  TaskTmrEvtProcess(osalTid task_id, osalEvt task_event);
+
+void    Bsp_ADC_Init(void);
+void    Init_boardID( void );
+uint8   get_boardID(void);
+
 
 #endif
 

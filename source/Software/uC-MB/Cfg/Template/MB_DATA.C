@@ -500,9 +500,25 @@ void  MB_HoldingRegWr (CPU_INT16U   reg,
     */
     if ( reg < sizeof(Ctrl) / 2 ) {
         preg    += reg;
+        
         /***********************************************
-        * 描述： 写入测量模块校准参数
-        */    
+        * 描述： 写入测量模块校准参数（如果地址范围在校验区，写校验标志置位）
+        */   
+        u32 addr = ((u32)&Ctrl.calitab - (u32)&Ctrl);
+        if(reg > addr && reg < (addr + sizeof(Ctrl.calitab)))
+        {
+            Ctrl.sys.paraflg.califlg = 1;      //存校准参数
+        }
+        /**************************************************************
+        * Description  : 存sys参数
+        * Author       : 2018/5/30 星期三, by redmorningcn
+        */
+        addr = (u32)((u32)&Ctrl.sys - (u32)&Ctrl);
+        if(reg > addr && reg < (addr + sizeof(Ctrl.sys)))
+        {
+            Ctrl.sys.paraflg.sysflg = 1;      //存sys参数
+        }
+                 
         //CPU_SR_ALLOC();
         //CPU_CRITICAL_ENTER();
         *preg       = reg_val;

@@ -35,7 +35,6 @@
 * Toolchain : IAR EWARM
 *********************************************************************************************************
 */
-
 #define   OS_CPU_GLOBALS
 
 #ifdef VSC_INCLUDE_SOURCE_FILE_NAMES
@@ -63,7 +62,6 @@ const  CPU_CHAR  *os_cpu_c__c = "$Id: $";
 * Note(s)    : None.
 *********************************************************************************************************
 */
-
 void  OSIdleTaskHook (void)
 {
 #if OS_CFG_APP_HOOKS_EN > 0u
@@ -72,7 +70,6 @@ void  OSIdleTaskHook (void)
     }
 #endif
 }
-
 
 /*$PAGE*/
 /*
@@ -86,12 +83,10 @@ void  OSIdleTaskHook (void)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-
 void  OSInitHook (void)
 {
     OS_CPU_ExceptStkBase = (CPU_STK *)(OSCfg_ISRStkBasePtr + OSCfg_ISRStkSize - 1u);
 }
-
 
 /*$PAGE*/
 /*
@@ -106,7 +101,6 @@ void  OSInitHook (void)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-
 void  OSStatTaskHook (void)
 {
 #if OS_CFG_APP_HOOKS_EN > 0u
@@ -115,7 +109,6 @@ void  OSStatTaskHook (void)
     }
 #endif
 }
-
 
 /*$PAGE*/
 /*
@@ -129,7 +122,6 @@ void  OSStatTaskHook (void)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-
 void  OSTaskCreateHook (OS_TCB  *p_tcb)
 {
 #if OS_CFG_APP_HOOKS_EN > 0u
@@ -140,7 +132,6 @@ void  OSTaskCreateHook (OS_TCB  *p_tcb)
     (void)p_tcb;                                            /* Prevent compiler warning                               */
 #endif
 }
-
 
 /*$PAGE*/
 /*
@@ -154,7 +145,6 @@ void  OSTaskCreateHook (OS_TCB  *p_tcb)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-
 void  OSTaskDelHook (OS_TCB  *p_tcb)
 {
 #if OS_CFG_APP_HOOKS_EN > 0u
@@ -165,7 +155,6 @@ void  OSTaskDelHook (OS_TCB  *p_tcb)
     (void)p_tcb;                                            /* Prevent compiler warning                               */
 #endif
 }
-
 
 /*$PAGE*/
 /*
@@ -180,7 +169,6 @@ void  OSTaskDelHook (OS_TCB  *p_tcb)
 * Note(s)    : None.
 *********************************************************************************************************
 */
-
 void  OSTaskReturnHook (OS_TCB  *p_tcb)
 {
 #if OS_CFG_APP_HOOKS_EN > 0u

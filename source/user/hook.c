@@ -12,6 +12,7 @@ extern  void  App_OS_SetAllHooks (void);
 void    Bsp_ADC_Init(void);
 void    Init_boardID( void );
 uint8   get_boardID(void);
+void    app_init_sctrl(void);
 
 /*******************************************************************************
 * Description  : BSP初始化钩子函数，在任务执行前运行
@@ -19,7 +20,9 @@ uint8   get_boardID(void);
 *******************************************************************************/
 void    BSP_Init_Hook(void)
 {
-    App_ModbusInit();                   //初始化串口及串口控制信息
+    app_init_sctrl();
+    
+    App_ModbusInit();                                   //初始化串口及串口控制信息
     
     /*******************************************************************************
     * Description  : 信号幅值及工作电源电压检测初始化化
@@ -46,7 +49,7 @@ void OS_TaskCreateHook(void)
     */
     App_OS_SetAllHooks();
     
-    App_TaskOsalCreate();               //创建osal任务。           
+    App_TaskOsalCreate();                           //创建osal任务。           
 }
 
 /*******************************************************************************

@@ -10,6 +10,12 @@
 #include    <app_loco_runstatus.h>
 
 
+/*******************************************************************************
+ * TYPEDEFS
+ */ 
+#define     STORE_ADDR_SYS      (0)                                     /* 存sys地址     */
+#define     STORE_ADDR_CALI     (STORE_ADDR_SYS + sizeof(strSysPara))   /* 存校验地址    */
+
 //osal
 void  App_TaskOsalCreate(void);
 void TaskInitTmr(void);

@@ -58,6 +58,7 @@ void App_ModbusInit(void)
 {
     MODBUS_CH   *pch;
     u8          comnum = 0;
+    u32         boud   = 0;
 
     /***********************************************
     * 描述： uCModBus初始化，RTU时钟频率为1000HZ
@@ -72,94 +73,33 @@ void App_ModbusInit(void)
     */
 #if MODBUS_CFG_MASTER_EN == DEF_TRUE
     
-    comnum      =   0;                                  //所用串号
-    
-    pch         = MB_CfgCh( DTU_NODE,                   // ... Modbus Node # for this slave channel
+    comnum      = 0;                                    //所用串号
+    boud        = 57600;
+    pch         = MB_CfgCh( DET_NODE,                   // ... Modbus Node # for this slave channel
                             MODBUS_SLAVE,               // ... This is a MASTER
                             200,                        // ... 0 when a slave
                             MODBUS_MODE_RTU,            // ... Modbus Mode (_ASCII or _RTU)
                             comnum,                     // ... Specify UART #1
-                            57600,                       // ... Baud Rate
+                            boud,                       // ... Baud Rate
                             USART_WordLength_8b,        // ... Number of data bits 7 or 8
                             USART_Parity_No,            // ... Parity: _NONE, _ODD or _EVEN
                             USART_StopBits_1,           // ... Number of stop bits 1 or 2
                             MODBUS_WR_EN);              // ... Enable (_EN) or disable (_DIS) writes
 
-    Ctrl.ComCtrl[DTU].ConnCtrl[DTU_C0].MB_Node     = DTU_NODE;     //modbus编号 
-    Ctrl.ComCtrl[DTU].ConnCtrl[DTU_C0].COM_Num     = comnum;       //串口号
-    Ctrl.ComCtrl[DTU].ConnCtrl[DTU_C0].MasterAddr  = LKJ_MAINBOARD_ADDR;   //无线发送模块地址
-    Ctrl.ComCtrl[DTU].ConnCtrl[DTU_C0].SlaveAddr   = DTU_ADDR;             //LKJ接口板csnc地址
+    Ctrl.ComCtrl[DET].ConnCtrl.MB_Node      = DET_NODE;     //modbus编号 
+    Ctrl.ComCtrl[DET].ConnCtrl.COM_Num      = comnum;       //串口号
+    Ctrl.ComCtrl[DET].ConnCtrl.Baud         = boud;
+
+    Ctrl.ComCtrl[DET].RxCtrl.EvtFlag        = COMM_EVT_FLAG_DTU_RX; //os事件标识 
+
+    pch->RxSem  = &MB_OS_RxSemTbl[comnum];              // 接收信号量
+    pch->TxSem  = &MB_OS_TxSemTbl[comnum];              // 发送信号量
+    Ctrl.ComCtrl[DET].pch  = pch;                      // ... modbus控制块和全局结构体建立连接
     
-    Ctrl.ComCtrl[DTU].pch  = pch;                      // ... modbus控制块和全局结构体建立连接
-    
-    DtuCom = &Ctrl.ComCtrl[DTU];                       //定义别名，在对应的任务中可用别名直接操作
+    DtuCom = &Ctrl.ComCtrl[DET];                       //定义别名，在对应的任务中可用别名直接操作
 #endif
     
-    
-    /***********************************************
-    * 描述： UART2连接工况检测板及速度信号检测板。modbus通讯
-    *        用作主机。
-    */
-#if MODBUS_CFG_MASTER_EN == DEF_TRUE
-    
-    comnum      =   1;                                  //所用串号
-    
-    pch         = MB_CfgCh( MTR_NODE,                   // ... Modbus Node # for this slave channel
-                            MODBUS_SLAVE,               // ... This is a MASTER
-                            200,                        // ... 0 when a slave
-                            MODBUS_MODE_RTU,            // ... Modbus Mode (_ASCII or _RTU)
-                            comnum,                     // ... Specify UART #1
-                            57600,                       // ... Baud Rate
-                            USART_WordLength_8b,        // ... Number of data bits 7 or 8
-                            USART_Parity_No,            // ... Parity: _NONE, _ODD or _EVEN
-                            USART_StopBits_1,           // ... Number of stop bits 1 or 2
-                            MODBUS_WR_EN);              // ... Enable (_EN) or disable (_DIS) writes
-
-    Ctrl.ComCtrl[MTR].ConnCtrl[MTR_C0].MB_Node     = MTR_NODE;             //modbus编号 
-    Ctrl.ComCtrl[MTR].ConnCtrl[MTR_C0].COM_Num     = comnum;               //串口号
-    Ctrl.ComCtrl[MTR].ConnCtrl[MTR_C0].MasterAddr  = LKJ_MAINBOARD_ADDR;   //无线发送模块地址（对MTR无效）
-    Ctrl.ComCtrl[MTR].ConnCtrl[MTR_C0].SlaveAddr   = DTU_ADDR;             //LKJ接口板csnc地址（对MTR无效）
-    
-    Ctrl.ComCtrl[MTR].pch  = pch;                      // ... modbus控制块和全局结构体建立连接
-    
-    MtrCom = &Ctrl.ComCtrl[MTR];                       //定义别名，在对应的任务中可用别名直接操作
-#endif    
-
-
-
-    /***********************************************
-    * 描述： UART2连接工况检测板及速度信号检测板。modbus通讯
-    *        用作主机。
-    */
-#if MODBUS_CFG_MASTER_EN == DEF_TRUE
-    
-    comnum      =   3;                                  //所用串号
-    
-    pch         = MB_CfgCh( TAX_NODE,                   // ... Modbus Node # for this slave channel
-                            MODBUS_SLAVE,               // ... This is a MASTER
-                            200,                        // ... 0 when a slave
-                            MODBUS_MODE_RTU,            // ... Modbus Mode (_ASCII or _RTU)
-                            comnum,                     // ... Specify UART #1
-                            57600,                       // ... Baud Rate
-                            USART_WordLength_8b,        // ... Number of data bits 7 or 8
-                            USART_Parity_No,            // ... Parity: _NONE, _ODD or _EVEN
-                            USART_StopBits_1,           // ... Number of stop bits 1 or 2
-                            MODBUS_WR_EN);              // ... Enable (_EN) or disable (_DIS) writes
-
-    Ctrl.ComCtrl[TAX].ConnCtrl[TAX_C0].MB_Node     = TAX_NODE;             //modbus编号 
-    Ctrl.ComCtrl[TAX].ConnCtrl[TAX_C0].COM_Num     = comnum;               //串口号
-    Ctrl.ComCtrl[TAX].ConnCtrl[TAX_C0].MasterAddr  = LKJ_MAINBOARD_ADDR;   //无线发送模块地址（对MTR无效）
-    Ctrl.ComCtrl[TAX].ConnCtrl[TAX_C0].SlaveAddr   = DTU_ADDR;             //LKJ接口板csnc地址（对MTR无效）
-    
-    Ctrl.ComCtrl[TAX].pch  = pch;                      // ... modbus控制块和全局结构体建立连接
-    
-    TaxCom = &Ctrl.ComCtrl[TAX];                       //定义别名，在对应的任务中可用别名直接操作
-#endif    
-
-
 }   
-
-
     
 
 

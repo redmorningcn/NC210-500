@@ -37,7 +37,6 @@
 
 #include <includes.h>
 
-
 /*
 *********************************************************************************************************
 *                                            LOCAL DEFINES
@@ -101,6 +100,31 @@ void    led_task(void)
     }
 }
 
+u16     BSP_FlashWriteBytes     (u32 addr, u8 *pbuf, u16 len);
+
+/**************************************************************
+* Description  : 保存参数
+* Author       : 2018/5/30 星期三, by redmorningcn
+*/
+void    store_para(void)
+{
+    if(Ctrl.sys.paraflg.califlg == 1){
+        Ctrl.sys.paraflg.califlg = 0; 
+        
+        BSP_FlashWriteBytes(STORE_ADDR_CALI,
+                        (u8 *)&Ctrl.calitab,
+                        sizeof(Ctrl.calitab));
+    }
+    
+    if(Ctrl.sys.paraflg.sysflg == 1){
+        Ctrl.sys.paraflg.sysflg = 0;
+        
+        BSP_FlashWriteBytes(STORE_ADDR_SYS,
+                            (u8 *)&Ctrl.sys,
+                            sizeof(Ctrl.sys));
+    }
+}
+
 /*******************************************************************************
 * Description  : 闲置任务，时间不紧迫的工作在此运行
 * Author       : 2018/4/16 星期一, by redmorningcn
@@ -113,6 +137,8 @@ void    idle_task(void)
         tick = Ctrl.sys.time;                               //时间
         
         led_task();                                         //指示灯控制
+        
+        store_para();                                       //保存参数
     }
 }
 

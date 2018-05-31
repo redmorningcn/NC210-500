@@ -57,7 +57,7 @@ void    app_calc_locovoltage(void)
         uint16  max,min;
         uint8   tmp8;
         uint16  tmp16;
-        
+        u32     vol;
         for(i = 0;i< 6;i++)
         {
             /*******************************************************************************
@@ -81,7 +81,14 @@ void    app_calc_locovoltage(void)
                 
                 sum += tmp16;
             }
-            Ctrl.loco.para.parabuf[i] = (sum - max - min)/8;                     //
+            //Ctrl.loco.para.parabuf[i] = (sum - max - min)/8;                     //
+            /**************************************************************
+            * Description  : 加入线性修正
+            * Author       : 2018/5/31 星期四, by redmorningcn
+            */
+            vol = (sum - max - min)/8;                     //
+            vol = (vol * Ctrl.calitab.CaliBuf[i].line / CALI_LINE_BASE) + Ctrl.calitab.CaliBuf[i].Delta;
+            Ctrl.loco.para.parabuf[i] =  vol;
         }
         
         /*******************************************************************************

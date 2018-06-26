@@ -81,12 +81,12 @@ typedef struct
     union  
     {
         struct _strpara_ {          
-            uint16              vcc;                           //预留
-            uint16              qy;                             //牵引
-            uint16              zd;                             //制动
-            uint16              xq;                             //向前
-            uint16              xh;                             //向后
-            uint16              lw;                             //零位
+            uint16              vcc;            //预留
+            uint16              qy;             //牵引
+            uint16              zd;             //制动
+            uint16              xq;             //向前
+            uint16              xh;             //向后
+            uint16              lw;             //零位
         }loco;
         uint16  parabuf[6];
     }para;
@@ -100,10 +100,9 @@ typedef struct
 * Author       : 2018/5/22 星期二, by redmorningcn
 */
 typedef struct {
-    u32     line;       //修正线性度  
-    int16   Delta;      //修正偏差
-    int16   tmp;        //预留
-
+    u32         line;                       //修正线性度  
+    int16       Delta;                      //修正偏差
+    int16       tmp;                        //预留
 }strCalibration;
 
 

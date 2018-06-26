@@ -16,20 +16,20 @@
 *******************************************************************************/
 typedef struct  
 {
-    uint32  id;             // 产品id       0
-    uint32  num;            // 产品编号     4
+    uint32  id;                             // 产品id       0
+    uint32  num;                            // 产品编号     4
     
     union{
         struct{
-            u8  sysflg      :1; // 存系统参数 
-            u8  califlg     :1; // 存校准参数
-            u8  rev         :6; // 预留
+            u8  sysflg      :1;             // 存系统参数 
+            u8  califlg     :1;             // 存校准参数
+            u8  rev         :6;             // 预留
         };
         u8  flags;
     }paraflg;
-    uint8   buf[63];        // 预留         8
-    uint32  cpu_freq;       // cpu频率      72
-    uint32  time;           // 系统全局时间(系统时钟(1/72Mhz) *65536)=约1ms   76
+    uint8   buf[63];                        // 预留         8
+    uint32  cpu_freq;                       // cpu频率      72
+    uint32  time;                           // 系统全局时间(系统时钟(1/72Mhz) *65536)=约1ms   76
 }strSysPara;    
 
 __packed

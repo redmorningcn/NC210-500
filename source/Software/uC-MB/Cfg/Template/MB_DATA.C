@@ -505,7 +505,7 @@ void  MB_HoldingRegWr (CPU_INT16U   reg,
         * 描述： 写入测量模块校准参数（如果地址范围在校验区，写校验标志置位）
         */   
         u32 addr = ((u32)&Ctrl.calitab - (u32)&Ctrl);
-        if(reg > addr && reg < (addr + sizeof(Ctrl.calitab)))
+        if(reg >= addr/2 && reg <= (addr + sizeof(Ctrl.calitab))/2)
         {
             Ctrl.sys.paraflg.califlg = 1;      //存校准参数
         }
@@ -514,7 +514,7 @@ void  MB_HoldingRegWr (CPU_INT16U   reg,
         * Author       : 2018/5/30 星期三, by redmorningcn
         */
         addr = (u32)((u32)&Ctrl.sys - (u32)&Ctrl);
-        if(reg > addr && reg < (addr + sizeof(Ctrl.sys)))
+        if(reg >= addr/2 && reg <= (addr + sizeof(Ctrl.sys))/2)
         {
             Ctrl.sys.paraflg.sysflg = 1;      //存sys参数
         }
